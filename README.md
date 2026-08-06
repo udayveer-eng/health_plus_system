@@ -105,3 +105,33 @@ npm run dev
 
 ### 4. Access the Application
 Open [http://localhost:3000](http://localhost:3000) in your browser to view the application.
+
+---
+
+## 🌍 Deployment Guide
+
+HealthPulse is fully optimized for cloud deployment. The recommended architecture is deploying the frontend on **Vercel** and the backend on **Render**.
+
+### Backend (Render)
+1. Create a **Web Service** on Render and connect your GitHub repo.
+2. **Root Directory**: `backend`
+3. **Build Command**: `npm install`
+4. **Start Command**: `node server.js`
+5. Add all environment variables (`MONGO_URI`, `JWT_SECRET`, etc.).
+6. Deploy and copy the `.onrender.com` URL.
+
+### Frontend (Vercel)
+1. Add a **New Project** on Vercel and import your GitHub repo.
+2. **Root Directory**: `frontend`
+3. **Framework Preset**: `Next.js`
+4. Add Environment Variable: `NEXT_PUBLIC_API_URL` = `[Your Render Backend URL]`
+5. Deploy.
+
+---
+
+## 👨‍💻 Author
+
+Designed & developed by **Aditya Verma**
+- **GitHub**: [f7aditya](https://github.com/f7aditya)
+- **LinkedIn**: [adityavermaf7](https://www.linkedin.com/in/adityavermaf7/)
+- **Email**: adiverma8858@gmail.com
