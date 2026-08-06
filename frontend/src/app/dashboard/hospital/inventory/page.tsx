@@ -257,9 +257,9 @@ export default function InventoryPage() {
           <AnimatePresence>
             {saved && (
               <motion.div
-                initial={{ opacity: 0, w: 0, x: -20 }}
-                animate={{ opacity: 1, w: "auto", x: 0 }}
-                exit={{ opacity: 0, w: 0, x: -20 }}
+                initial={{ opacity: 0, width: 0, x: -20 }}
+                animate={{ opacity: 1, width: "auto", x: 0 }}
+                exit={{ opacity: 0, width: 0, x: -20 }}
                 className="text-black bg-[var(--accent)] px-3 py-1.5 rounded-lg flex items-center font-bold text-sm whitespace-nowrap overflow-hidden ml-2"
               >
                 <CheckCircle2 className="w-4 h-4 mr-1.5" />
