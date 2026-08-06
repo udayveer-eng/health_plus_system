@@ -71,7 +71,7 @@ export function GlobalSearch() {
     }
   };
 
-  if (!user || user.role === "ADMIN") return null;
+  if (!user || (user.role as string) === "ADMIN") return null;
 
   const isPatient = user.role === "PATIENT";
   const placeholder = isPatient ? "Search hospitals by name or city..." : "Search patient emergencies by name...";
