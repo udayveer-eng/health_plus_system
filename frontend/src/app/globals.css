@@ -1,0 +1,77 @@
+@import "tailwindcss";
+
+@theme inline {
+  /* We map our CSS variables to Tailwind colors here */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-secondary: var(--secondary);
+  --color-accent: var(--accent);
+  --color-surface: var(--surface);
+  --color-surface-dark: var(--surface-dark);
+  --color-border: var(--border);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-error: var(--error);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+/* Base Theme (Tabela Light Bento Box Aesthetic) */
+:root {
+  --background: #F3F3F1; /* Soft off-white/warm gray background */
+  --foreground: #1A1A1A; /* Deep charcoal for text */
+  --primary: #1A1A1A; /* Deep charcoal for buttons/primary actions */
+  --primary-hover: #333333;
+  --secondary: #E5E5E5;
+  --accent: #D6F53D; /* Lime yellow highlight */
+  --surface: #FFFFFF; /* Pure white cards */
+  --surface-dark: #3F3F3F; /* Charcoal/dark cards */
+  --border: #EAEAEA;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --error: #ef4444;
+}
+
+/* Global resets and utility enhancements */
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), sans-serif;
+  overflow-x: hidden;
+  transition: background-color 0.3s ease;
+}
+
+/* Base Bento Card */
+.bento-card {
+  background-color: var(--surface);
+  border-radius: 32px;
+  overflow: hidden;
+  position: relative;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Dark Bento Card variant */
+.bento-card.dark {
+  background-color: var(--surface-dark);
+  color: #FFFFFF;
+}
+
+/* The hand-drawn circle SVG stroke animation */
+.drawn-circle {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: draw 1.5s ease-out forwards;
+}
+
+@keyframes draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Remove animated gradient backgrounds from old theme */
+.animated-bg {
+  display: none;
+}

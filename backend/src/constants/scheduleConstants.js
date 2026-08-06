@@ -1,0 +1,11 @@
+export const SCHEDULE_STATUS = {
+  AVAILABLE: "AVAILABLE",
+  BOOKED: "BOOKED",
+  BLOCKED: "BLOCKED",
+  LEAVE: "LEAVE",
+};
+
+export const CONSULTATION_TYPES = {
+  ONLINE: "ONLINE",
+  OFFLINE: "OFFLINE",
+};

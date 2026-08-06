@@ -5,27 +5,23 @@ const protect = (req, res, next) => {
     const authHeader = req.headers.authorization;
 
     if (!authHeader) {
-      return res.status(401).json({
-        message: "No token, access denied",
-      });
+      const error = new Error("No token, access denied");
+      error.status = 401;
+      return next(error);
     }
 
     const token = authHeader.split(" ")[1];
 
-    console.log("TOKEN:", token);
-
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    console.log("DECODED:", decoded);
-
-    req.user = decoded;
+    req.user = {
+      userId: decoded.userId,
+      role: decoded.role
+    };
 
     next();
   } catch (error) {
-    console.log("ERROR:", error.message);
-    return res.status(401).json({
-      message: "Invalid token",
-    });
+    next(error);
   }
 };
 

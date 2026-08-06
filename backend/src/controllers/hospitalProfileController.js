@@ -1,9 +1,12 @@
 import Hospital from "../models/Hospital.js";
+import User from "../models/User.js";
+import jwt from "jsonwebtoken";
 
 const getProfile = async (req, res) => {
   try {
-    const hospital = await Hospital.findById(req.user.id);
-    if (!hospital) {
+    const user = await User.findById(req.user.userId);
+    const hospital = await Hospital.findOne({ userId: req.user.userId });
+    if (!hospital || !user) {
       return res.status(404).json({
         success: false,
         message: "Hospital not found",
@@ -14,10 +17,10 @@ const getProfile = async (req, res) => {
       hospital: {
         id: hospital._id,
         name: hospital.name,
-        email: hospital.email,
+        email: user.email,
         location: hospital.location,
         city: hospital.city,
-        isVerified: hospital.isVerified,
+        isVerified: user.isVerified,
         resourceUpdatedAt: hospital.resourceUpdatedAt,
         createdAt: hospital.createdAt,
       },
@@ -34,13 +37,7 @@ const getProfile = async (req, res) => {
 const updateProfile = async (req, res) => {
   try {
     const { name, city, location } = req.body;
-    const hospital = await Hospital.findById(req.user.id);
-    if (!hospital) {
-      return res.status(404).json({
-        success: false,
-        message: "Hospital not found",
-      });
-    }
+    const updateQuery = {};
 
     if (name !== undefined) {
       if (!name.trim()) {
@@ -49,7 +46,7 @@ const updateProfile = async (req, res) => {
           message: "Name cannot be empty",
         });
       }
-      hospital.name = name;
+      updateQuery.name = name;
     }
 
     if (city !== undefined) {
@@ -59,31 +56,52 @@ const updateProfile = async (req, res) => {
           message: "City cannot be empty",
         });
       }
-      hospital.city = city;
+      updateQuery.city = city;
     }
 
     if (location !== undefined) {
-      if (!location.trim()) {
-        return res.status(400).json({
-          success: false,
-          message: "Location cannot be empty",
-        });
-      }
-      hospital.location = location;
+      // Location is optional, so we allow empty strings.
+      updateQuery.location = location;
     }
 
-    await hospital.save();
+    const hospital = await Hospital.findOneAndUpdate(
+      { userId: req.user.userId },
+      { $set: updateQuery },
+      { new: true }
+    );
+    
+    const user = await User.findById(req.user.userId);
+
+    if (!hospital || !user) {
+      return res.status(404).json({
+        success: false,
+        message: "Hospital not found",
+      });
+    }
+
+    const token = jwt.sign(
+      {
+        userId: user._id,
+        role: user.role,
+        name: hospital.name,
+        email: user.email,
+        city: hospital.city,
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "1d" }
+    );
 
     return res.status(200).json({
       success: true,
       message: "Profile updated successfully",
+      token,
       hospital: {
         id: hospital._id,
         name: hospital.name,
-        email: hospital.email,
+        email: user.email,
         city: hospital.city,
         location: hospital.location,
-        isVerified: hospital.isVerified,
+        isVerified: user.isVerified,
       },
     });
   } catch (error) {

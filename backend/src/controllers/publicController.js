@@ -1,4 +1,7 @@
 import Hospital from "../models/Hospital.js";
+import User from "../models/User.js";
+import EmergencyRequest from "../models/EmergencyRequest.js";
+import ROLES from "../constants/roles.js";
 import { BED_TYPES, BLOOD_GROUPS } from "../constants/resourceConstants.js";
 
 const getHospitals = async (req, res) => {
@@ -34,8 +37,12 @@ const getHospitals = async (req, res) => {
     }
     const skip = (pageNumber - 1) * limitNumber;
 
+    const verifiedUsers = await User.find({ role: ROLES.HOSPITAL, isVerified: true }).select('_id');
+    const verifiedUserIds = verifiedUsers.map(user => user._id);
+
     const query = {
-      isVerified: true,
+      userId: { $in: verifiedUserIds },
+      isDeleted: false,
     };
 
     // Filter by city
@@ -119,4 +126,58 @@ const getHospitals = async (req, res) => {
   }
 };
 
-export { getHospitals };
+const getGlobalStats = async (req, res) => {
+  try {
+    const hospitals = await Hospital.find({ isDeleted: false });
+    
+    let totalBeds = 0;
+    let totalOxygen = 0;
+    let totalBlood = 0;
+
+    hospitals.forEach(h => {
+      // Aggregate beds
+      if (h.beds) {
+        if (h.beds.general) totalBeds += h.beds.general.available || 0;
+        if (h.beds.icu) totalBeds += h.beds.icu.available || 0;
+        if (h.beds.ventilator) totalBeds += h.beds.ventilator.available || 0;
+        if (h.beds.emergency) totalBeds += h.beds.emergency.available || 0;
+      }
+
+      // Aggregate oxygen
+      if (h.oxygenInventory) {
+        totalOxygen += h.oxygenInventory.available || 0;
+      }
+
+      // Aggregate blood (only numeric values, mongoose stores it properly but we check)
+      if (h.bloodInventory) {
+        const bloodData = h.bloodInventory.toJSON ? h.bloodInventory.toJSON() : h.bloodInventory;
+        Object.values(bloodData).forEach(val => {
+          if (typeof val === 'number') totalBlood += val;
+        });
+      }
+    });
+
+    // Active emergencies count
+    const activeEmergencies = await EmergencyRequest.countDocuments({
+      status: { $in: ["pending", "PENDING", "accepted", "ACCEPTED", "in_progress", "IN_PROGRESS"] }
+    });
+
+    return res.status(200).json({
+      success: true,
+      stats: {
+        beds: totalBeds,
+        oxygen: totalOxygen,
+        blood: totalBlood,
+        activeEmergencies
+      }
+    });
+  } catch (error) {
+    console.error("Get Global Stats Error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch global stats",
+    });
+  }
+};
+
+export { getHospitals, getGlobalStats };

@@ -4,10 +4,16 @@ import {
   BLOOD_GROUPS,
   REQUEST_STATUSES,
   RESOURCE_TYPES,
+  PRIORITY_LEVELS,
 } from "../constants/resourceConstants.js";
 
 const emergencyRequestSchema = new mongoose.Schema(
   {
+    patientId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      index: true,
+    },
     patientName: {
       type: String,
       required: true,
@@ -30,6 +36,18 @@ const emergencyRequestSchema = new mongoose.Schema(
       type: String,
       required: true,
       enum: RESOURCE_TYPES,
+    },
+
+    quantity: {
+      type: Number,
+      min: 1,
+      default: 1,
+    },
+
+    priority: {
+      type: String,
+      enum: PRIORITY_LEVELS,
+      default: "medium",
     },
 
     bedType: {
@@ -60,6 +78,19 @@ const emergencyRequestSchema = new mongoose.Schema(
       default: "pending",
     },
 
+    expiresAt: {
+      type: Date,
+    },
+    acceptedAt: {
+      type: Date,
+    },
+    completedAt: {
+      type: Date,
+    },
+    cancelledAt: {
+      type: Date,
+    },
+
     message: {
       type: String,
       trim: true,
@@ -70,6 +101,9 @@ const emergencyRequestSchema = new mongoose.Schema(
     timestamps: true,
   },
 );
+
+// Optimizes fetching pending requests for a specific city
+emergencyRequestSchema.index({ city: 1, status: 1 });
 
 const EmergencyRequest = mongoose.model(
   "EmergencyRequest",

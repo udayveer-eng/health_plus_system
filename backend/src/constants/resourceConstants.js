@@ -9,11 +9,22 @@ export const BLOOD_GROUPS = [
   "O_POSITIVE",
   "O_NEGATIVE",
 ];
-export const RESOURCE_TYPES = ["bed", "blood"];
+export const RESOURCE_TYPES = ["bed", "blood", "oxygen"];
 
 export const REQUEST_STATUSES = [
   "pending",
   "accepted",
+  "in_progress",
   "completed",
   "cancelled",
+  "expired",
+  // Uppercase for newer implementations based on requirements
+  "PENDING",
+  "ACCEPTED",
+  "IN_PROGRESS",
+  "COMPLETED",
+  "CANCELLED",
+  "EXPIRED"
 ];
+
+export const PRIORITY_LEVELS = ["low", "medium", "high", "critical", "LOW", "MEDIUM", "HIGH", "CRITICAL"];

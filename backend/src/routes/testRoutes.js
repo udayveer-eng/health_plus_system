@@ -1,14 +1,16 @@
 import express from "express";
 import protect from "../middlewares/authMiddleware.js";
 import Hospital from "../models/Hospital.js";
+import User from "../models/User.js";
 
 const router = express.Router();
 
 router.get("/dashboard", protect, async (req, res) => {
   try {
-    const hospital = await Hospital.findById(req.user.id);
+    const user = await User.findById(req.user.userId);
+    const hospital = await Hospital.findOne({ userId: req.user.userId });
 
-    if (!hospital) {
+    if (!hospital || !user) {
       return res.status(404).json({
         message: "Hospital not found",
         success: false,
@@ -21,7 +23,7 @@ router.get("/dashboard", protect, async (req, res) => {
       hospital: {
         id: hospital._id,
         name: hospital.name,
-        email: hospital.email,
+        email: user.email,
         location: hospital.location,
         createdAt: hospital.createdAt,
       },

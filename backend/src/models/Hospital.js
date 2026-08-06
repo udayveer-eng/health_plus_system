@@ -44,16 +44,15 @@ const hospitalSchema = new mongoose.Schema(
 
     email: {
       type: String,
-      required: true,
-      unique: true,
-      lowercase: true,
       trim: true,
+      lowercase: true,
     },
 
-    password: {
-      type: String,
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
       required: true,
-      select: false,
+      index: true,
     },
 
     location: {
@@ -99,11 +98,19 @@ const hospitalSchema = new mongoose.Schema(
       default: () => ({}),
     },
 
-    // Later, admin will verify hospitals before making them public.
-    isVerified: {
+    oxygenInventory: {
+      total: { type: Number, default: 0, min: 0 },
+      available: { type: Number, default: 0, min: 0 },
+    },
+
+    isDeleted: {
       type: Boolean,
       default: false,
-      index: true,
+    },
+
+    deletedAt: {
+      type: Date,
+      default: null,
     },
 
     // Tells users how fresh the resource data is.
@@ -117,13 +124,8 @@ const hospitalSchema = new mongoose.Schema(
   },
 );
 
-// Helps MongoDB quickly search verified hospitals in a city
-// that have general beds available.
-hospitalSchema.index({
-  city: 1,
-  isVerified: 1,
-  "beds.general.available": 1,
-});
+// Indexes for quick search by city
+hospitalSchema.index({ city: 1, resourceUpdatedAt: -1 });
 
 const Hospital = mongoose.model("Hospital", hospitalSchema);
 

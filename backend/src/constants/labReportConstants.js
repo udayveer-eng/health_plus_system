@@ -1,0 +1,4 @@
+export const LAB_REPORT_STATUS = {
+  PENDING: "PENDING",
+  COMPLETED: "COMPLETED",
+};

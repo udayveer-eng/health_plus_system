@@ -1,0 +1,8 @@
+const ROLES = {
+  ADMIN: "ADMIN",
+  HOSPITAL: "HOSPITAL",
+  PATIENT: "PATIENT",
+  DISPATCHER: "DISPATCHER",
+};
+
+export default ROLES;
