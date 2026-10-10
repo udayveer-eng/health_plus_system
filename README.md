@@ -128,10 +128,3 @@ HealthPulse is fully optimized for cloud deployment. The recommended architectur
 5. Deploy.
 
 ---
-
-## 👨‍💻 Author
-
-Designed & developed by **Aditya Verma**
-- **GitHub**: [f7aditya](https://github.com/f7aditya)
-- **LinkedIn**: [adityavermaf7](https://www.linkedin.com/in/adityavermaf7/)
-- **Email**: adiverma8858@gmail.com
